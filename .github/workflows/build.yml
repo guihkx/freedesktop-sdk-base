@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Create build image
+        run: podman build -t freedesktop-sdk-base -f Dockerfile .
+
+      - name: Build
+        run: podman run --userns=keep-id --user $(id -u):$(id -g) --rm -v $(pwd):/build -t freedesktop-sdk-base make ARCH=i386 REPO=repo
+
+      - name: Check size of images/
+        run: du -h images || true
+
+      - name: List files in images/
+        run: tree -fhv images || true
+
+      - name: Upload images
+        uses: actions/upload-artifact@v4
+        with:
+          name: images
+          path: images
+
+      - name: Check size of repo/
+        run: du -h repo || true
+
+      - name: List files in repo/
+        run: tree -I debug/ -fhv repo || true
+
+      - name: Upload repo
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo
+          path: repo
