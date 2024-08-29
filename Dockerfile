@@ -10,9 +10,13 @@ RUN apk add --no-cache --virtual .build-deps flatpak-builder git && \
         -i org.flatpak.Builder.json && \
     flatpak --system remote-add flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
     flatpak --system install -y --noninteractive --no-related flathub org.freedesktop.Sdk/x86_64/1.6 && \
-    flatpak-builder --system -v --force-clean --sandbox --delete-build-dirs --arch x86_64 \
+    flatpak-builder --system -v --force-clean --sandbox --disable-rofiles-fuse --delete-build-dirs --arch x86_64 \
                     --repo repo --default-branch stable --subject 'org.flatpak.Builder 2018 (7c39b3f0)' \
-                    builddir org.flatpak.Builder.json && \
+                    builddir org.flatpak.Builder.json --download-only && \
+    apk add --no-cache strace && \
+    strace -ff flatpak-builder --system -v --force-clean --sandbox --disable-rofiles-fuse --delete-build-dirs --arch x86_64 \
+                    --repo repo --default-branch stable --subject 'org.flatpak.Builder 2018 (7c39b3f0)' \
+                    builddir org.flatpak.Builder.json --disable-download && \
     flatpak --system install -y --noninteractive --no-related "$(pwd)/repo" org.flatpak.Builder/x86_64/stable && \
     cd .. && \
     rm -rf org.flatpak.Builder && \
