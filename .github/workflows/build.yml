@@ -16,10 +16,10 @@ jobs:
           submodules: true
 
       - name: Create build image
-        run: podman build -t freedesktop-sdk-base -f Dockerfile .
+        run: docker build -t flatpak-builder-2018 -f Dockerfile .
 
       - name: Build
-        run: podman run --userns=keep-id --user $(id -u):$(id -g) --rm -v $(pwd):/build -t freedesktop-sdk-base make ARCH=i386 REPO=repo
+        run: podman run --privileged --userns=keep-id --user $(id -u):$(id -g) --rm -v $(pwd):/build -t flatpak-builder-2018 flatpak --system run --env=LANG=en_US.UTF-8 --command=make org.flatpak.Builder all ARCH=i386 REPO=repo
 
       - name: Check size of images/
         run: du -h images || true
