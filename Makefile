@@ -38,6 +38,7 @@ ${IMAGES} allimages:
 	git submodule update --init
 	mkdir -p build/${ARCH}
 	./freedesktop-sdk-build-yocto ${srcdir}/ ${builddir}/build/ ${ARCH} ${HASH} ${VERSION}
+	rm -rf build
 
 .PHONY: sdk platform
 
