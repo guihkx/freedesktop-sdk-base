@@ -54,7 +54,7 @@ ${FILE_REF_SDK}: metadata.sdk.in ${SDK_IMAGE}
 	find sdk -type f -name '*.pyc' -exec sh -c 'test "$$1" -ot "$${1%c}"' -- {} \; -print -delete # Remove stale 2.7 .pyc files
 	find sdk -type f -name '*.pyo' -exec sh -c 'test "$$1" -ot "$${1%o}"' -- {} \; -print -delete # Remove stale 2.7 .pyc files
 	$(call subst-metadata,metadata.sdk.in,sdk/metadata)
-	ostree commit ${COMMIT_ARGS} ${GPG_ARGS} --branch=${REF_SDK}  -s "build of ${HASH}" sdk
+	flatpak build-export --files=files -s "build of ${HASH}" ${REPO} sdk ${VERSION}
 	flatpak build-update-repo ${GPG_ARGS} ${REPO}
 	rm -rf sdk
 
@@ -70,7 +70,7 @@ ${FILE_REF_PLATFORM}: metadata.platform.in ${PLATFORM_IMAGE}
 	find platform -type f -name '*.pyc' -exec sh -c 'test "$$1" -ot "$${1%c}"' -- {} \; -print -delete # Remove stale 2.7 .pyc files
 	find platform -type f -name '*.pyo' -exec sh -c 'test "$$1" -ot "$${1%o}"' -- {} \; -print -delete # Remove stale 2.7 .pyc files
 	$(call subst-metadata,metadata.platform.in,platform/metadata)
-	ostree commit ${COMMIT_ARGS} ${GPG_ARGS} --branch=${REF_PLATFORM}  -s "build of ${HASH}" platform
+	flatpak build-export --files=files -s "build of ${HASH}" ${REPO} platform ${VERSION}
 	flatpak build-update-repo ${GPG_ARGS} ${REPO}
 	rm -rf platform
 
